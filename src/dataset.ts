@@ -157,35 +157,85 @@ export function classifyCircleData(numSamples: number, noise: number):
     Example2D[] {
   let points: Example2D[] = [];
   let radius = 5;
+  let innerVar = 0.4
+  let outerVar = 0.7
   function getCircleLabel(p: Point, center: Point) {
-    return (dist(p, center) < (radius * 0.5)) ? 1 : -1;
+    return (dist(p, center) < (radius * innerVar)) ? 1 : -1;
   }
-
-  // Generate positive points inside the circle.
-  for (let i = 0; i < numSamples / 2; i++) {
-    let r = randUniform(0, radius * 0.5);
+  function getSample(radius: number, radius_mult: number, center: Point) {
+    let r = randUniform(0, radius * radius_mult);
     let angle = randUniform(0, 2 * Math.PI);
-    let x = r * Math.sin(angle);
-    let y = r * Math.cos(angle);
+    let x = center.x + (r * Math.sin(angle));
+    let y = center.y + (r * Math.cos(angle));
     let noiseX = randUniform(-radius, radius) * noise;
     let noiseY = randUniform(-radius, radius) * noise;
-    let label = getCircleLabel({x: x + noiseX, y: y + noiseY}, {x: 0, y: 0});
-    points.push({x, y, label});
+    let label = getCircleLabel({x: x + noiseX, y: y + noiseY}, center);
+    return {x, y, label};
   }
+  // Generate positive points inside the circle.
 
+  for (let i = 0; i < numSamples / 2; i++) {
+    points.push(getSample(radius, innerVar, {x: 0, y:0}));
+  }
+  
   // Generate negative points outside the circle.
   for (let i = 0; i < numSamples / 2; i++) {
-    let r = randUniform(radius * 0.7, radius);
+    points.push(getSample(radius, outerVar, {x: 0, y:0}));
+  }
+  
+  return points;
+}
+
+export function classifyCirclesData(numSamples: number, noise: number):
+    Example2D[] {
+  let points: Example2D[] = [];
+  let radius = 2;
+  let innerVar = 0.3
+  let outerVar = 0.7
+  function getCircleLabel(p: Point, center: Point) {
+    return (dist(p, center) < (radius * innerVar)) ? 1 : -1;
+  }
+  function getSample(radius: number, radius_mult: number, center: Point) {
+    let r = randUniform(0, radius * radius_mult);
     let angle = randUniform(0, 2 * Math.PI);
-    let x = r * Math.sin(angle);
-    let y = r * Math.cos(angle);
+    let x = center.x + (r * Math.sin(angle));
+    let y = center.y + (r * Math.cos(angle));
     let noiseX = randUniform(-radius, radius) * noise;
     let noiseY = randUniform(-radius, radius) * noise;
-    let label = getCircleLabel({x: x + noiseX, y: y + noiseY}, {x: 0, y: 0});
-    points.push({x, y, label});
+    let label = getCircleLabel({x: x + noiseX, y: y + noiseY}, center);
+    return {x, y, label};
+  }
+  numSamples = (numSamples < 32) ? 32 : numSamples;
+  // Generate positive points inside the circle.
+
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, innerVar, {x: -2, y:-2}));
+  }
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, innerVar, {x: -2, y:2}));
+  }
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, innerVar, {x: 2, y:2}));
+  }
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, innerVar, {x: 2, y:-2}));
+  }
+  // Generate negative points outside the circle.
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, outerVar, {x: -2, y:-2}));
+  }
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, outerVar, {x: -2, y:2}));
+  }
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, outerVar, {x: 2, y:2}));
+  }
+  for (let i = 0; i < numSamples / 8; i++) {
+    points.push(getSample(radius, outerVar, {x: 2, y:-2}));
   }
   return points;
 }
+
 
 export function classifyXORData(numSamples: number, noise: number):
     Example2D[] {

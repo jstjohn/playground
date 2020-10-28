@@ -38,6 +38,7 @@ export let regularizations: {[key: string]: nn.RegularizationFunction} = {
 export let datasets: {[key: string]: dataset.DataGenerator} = {
   "circle": dataset.classifyCircleData,
   "xor": dataset.classifyXORData,
+  "circles": dataset.classifyCirclesData,
   "gauss": dataset.classifyTwoGaussData,
   "spiral": dataset.classifySpiralData,
 };
